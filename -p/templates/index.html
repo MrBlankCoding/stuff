@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en" class="has-background-grey-darker has-text-white">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ stock_symbol }} Stock Prices</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .chart-container {
+            position: relative;
+            height: 500px;
+        }
+        .is-rounded {
+            border-radius: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <section class="section">
+        <div class="container">
+            <h1 class="title has-text-centered has-text-white">{{ stock_symbol }} Stock Prices</h1>
+            <form method="post" class="has-text-centered">
+                <div class="field has-addons has-addons-centered">
+                    <div class="control">
+                        <input class="input is-rounded" type="text" name="stock_symbol" placeholder="Enter stock symbol" required>
+                    </div>
+                    <div class="control">
+                        <button class="button is-primary is-rounded" type="submit">Get Stock Data</button>
+                    </div>
+                </div>
+            </form>
+            <div class="chart-container">
+                <canvas id="stockChart" class="is-rounded"></canvas>
+            </div>
+            <div class="notification is-link has-text-centered is-rounded mt-5">
+                <p class="has-text-weight-bold">1 week prediction: ${{ future_price }}</p>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        const stockData = {{ stock_data|tojson }};
+        const labels = stockData.map(data => data[0]);
+        const prices = stockData.map(data => data[1]);
+
+        const ctx = document.getElementById('stockChart').getContext('2d');
+        const chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: '{{ stock_symbol }} Stock Prices',
+                    data: prices,
+                    borderColor: '#66D9EF', // Aqua color
+                    backgroundColor: 'rgba(102, 217, 239, 0.2)',
+                    borderWidth: 2,
+                    pointRadius: 3,
+                    pointBackgroundColor: '#66D9EF',
+                    pointBorderColor: '#000000',
+                }]
+            },
+            options: {
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    title: {
+                        display: true,
+                        text: 'Stock Price Trend',
+                        font: {
+                            size: 18,
+                            weight: 'bold'
+                        },
+                        color: '#FFFFFF'
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        titleColor: '#FFFFFF',
+                        bodyColor: '#FFFFFF',
+                        borderColor: '#66D9EF',
+                        borderWidth: 2,
+                    }
+                },
+                scales: {
+                    x: {
+                        display: true,
+                        title: {
+                            display: true,
+                            text: 'Date',
+                            color: '#FFFFFF',
+                            font: {
+                                weight: 'bold'
+                            }
+                        },
+                        ticks: {
+                            color: '#FFFFFF'
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.2)'
+                        }
+                    },
+                    y: {
+                        display: true,
+                        title: {
+                            display: true,
+                            text: 'Price (USD)',
+                            color: '#FFFFFF',
+                            font: {
+                                weight: 'bold'
+                            }
+                        },
+                        ticks: {
+                            color: '#FFFFFF'
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.2)'
+                        }
+                    }
+                },
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: {
+                    mode: 'index',
+                    intersect: false,
+                    axis: 'x',
+                    zoom: {
+                        enabled: true
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
