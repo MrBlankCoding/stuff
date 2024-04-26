@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apple Stock Price</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>Apple Stock Price</h1>
+    <p>Current AAPL Stock Price: ${{ stock_price }}</p>
+    <p>Predicted AAPL Stock Price (One Week from Now): ${{ future_price }}</p>
+    <canvas id="stockChart" width="400" height="200"></canvas>
+    <script>
+        var ctx = document.getElementById('stockChart').getContext('2d');
+        var myChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [
+                    {% for timestamp in timestamps %}
+                        '{{ timestamp }}',
+                    {% endfor %}
+                ],
+                datasets: [{
+                    label: 'AAPL Stock Price',
+                    data: [
+                        {% for price in prices %}
+                            {{ price }},
+                        {% endfor %}
+                    ],
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: false
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
